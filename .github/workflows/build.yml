@@ -2,10 +2,9 @@ on:
   push:
     branches:
       - main
-    schedule:
-      - cron: "0 8 * * *"
-    workflow_dispatch:
-runs-on: ubuntu-latest
+  schedule:
+    - cron: "0 8 * * *"
+  workflow_dispatch:
 
 jobs:
   php-cli:
