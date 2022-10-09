@@ -1,0 +1,52 @@
+on:
+  push:
+    branches:
+      - main
+    schedule:
+      - cron: "0 8 * * *"
+    workflow_dispatch:
+runs-on: ubuntu-latest
+
+jobs:
+  php-cli:
+    strategy:
+      matrix:
+        build-type: [ cli ]
+        build-version: [ "8.0", "8.1", "8.2" ]
+        include:
+          - build-type: cli
+            build-version: latest
+            latest: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push (latest)
+        uses: docker/build-push-action@v3
+        with:
+          context: ./php/context
+          file: ./php/${{ matrix.build-type }}/${{ matrix.build-version }}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/magento2-php:${{ matrix.build-version }}-${{ matrix.build-type }}
+      - if: ${{ matrix.latest }}
+        name: Build and push (latest)
+        uses: docker/build-push-action@v3
+        with:
+          context: ./php/context
+          file: ./php/${{ matrix.build-type }}/${{ matrix.build-version }}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/magento2-php:latest

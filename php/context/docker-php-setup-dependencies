@@ -1,0 +1,24 @@
+#!/bin/sh
+
+set -xe
+
+num_proc=$(nproc)
+apk add --no-cache zlib freetype-dev libjpeg-turbo-dev libxml2-dev oniguruma-dev \
+                   libpng-dev libzip-dev libwebp-dev icu-dev libxslt-dev
+
+docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd
+docker-php-ext-configure gd --with-webp --with-freetype --with-jpeg --enable-static --enable-gd
+docker-php-ext-install -j "$num_proc" pdo_mysql intl mbstring soap xsl zip sockets gd
+
+apk add --virtual php-ext-dependencies $PHPIZE_DEPS
+docker-php-source extract
+pecl install ast
+docker-php-source delete
+apk del php-ext-dependencies
+
+docker-php-ext-enable gd pdo_mysql intl mbstring soap sockets xsl zip ast
+
+
+
+apk add --no-cache git tini unzip
+

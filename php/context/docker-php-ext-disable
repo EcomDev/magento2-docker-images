@@ -1,0 +1,35 @@
+#!/bin/sh
+
+usage() {
+        echo "usage: $0 module-name [module-name ...]"
+        echo "   ie: $0 ast json"
+        echo
+        echo 'Possible values for module-name:'
+        find -maxdepth 1 \
+                        -type f \
+                        -name '*.so' \
+                        -exec basename '{}' ';' \
+                | sort \
+                | xargs
+        echo
+        echo 'Some of the above modules are already compiled into PHP; please check'
+        echo 'the output of "php -i" to see which modules are already loaded.'
+}
+
+modules=( "$@" )
+
+if ${#modules} -eq 0
+then
+  usage
+fi
+
+for module in ${modules}
+do
+  if [ -f "$PHP_INI_DIR/conf.d/docker-php-ext-$module.ini" ]
+  then
+    rm "$PHP_INI_DIR/conf.d/docker-php-ext-$module.ini"
+    echo "Disabled $module"
+  else
+    echo "Cannot find $module INI file in $PHP_INI_DIR"
+  fi
+done
