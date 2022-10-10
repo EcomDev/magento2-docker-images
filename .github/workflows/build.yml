@@ -16,7 +16,7 @@ jobs:
           - build-type: cli
             build-version: latest
             latest: true
-    runs-on: arch-latest
+    runs-on: [self-hosted, linux, x64]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
