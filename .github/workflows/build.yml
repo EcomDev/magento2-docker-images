@@ -16,7 +16,7 @@ jobs:
           - build-type: cli
             build-version: latest
             latest: true
-    runs-on: ubuntu-latest
+    runs-on: arch-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -37,7 +37,7 @@ jobs:
           file: ./php/${{ matrix.build-type }}/${{ matrix.build-version }}/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/ecomdev/magento2-php:${{ matrix.build-version }}-${{ matrix.build-type }}
+          tags: ghcr.io/ecomdev/php:${{ matrix.build-version }}-${{ matrix.build-type }}
       - if: ${{ matrix.latest }}
         name: Build and push (latest)
         uses: docker/build-push-action@v3
@@ -46,5 +46,5 @@ jobs:
           file: ./php/${{ matrix.build-type }}/${{ matrix.build-version }}/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/ecomdev/magento2-php:latest
+          tags: ghcr.io/ecomdev/php:latest
 

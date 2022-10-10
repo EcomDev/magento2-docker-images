@@ -8,3 +8,6 @@ COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 COPY docker-php-* /usr/local/bin/
 RUN chmod +x /usr/local/bin/*
 RUN docker-php-setup-dependencies
+
+ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV COMPOSER_HOME /tmp

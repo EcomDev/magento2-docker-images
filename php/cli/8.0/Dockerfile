@@ -7,5 +7,7 @@ LABEL org.opencontainers.image.licenses=MIT
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 COPY docker-php-* /usr/local/bin/
 RUN chmod +x /usr/local/bin/*
-RUN mkdir /tmp/composer
 RUN docker-php-setup-dependencies
+
+ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV COMPOSER_HOME /tmp
